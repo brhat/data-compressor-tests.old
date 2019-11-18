@@ -1,17 +1,17 @@
 #!/bin/bash
 
 set -euo pipefail
-source jenkins/emulator.sh
+source emulator.sh
+checkBitsSizePath=".."
+source_file="$checkBitSizePath/checkBitSize/checkBitSize.c"
 
-source_file="checkBitSize/checkBitSize.c"
-
-linux_command="checkBitSize/checkBitSize"
+linux_command="$checkBitSizePath/checkBitSize/checkBitSize"
 
 windows_compiler="/c/Program\ Files\ \(x86\)/MSBuild/12.0/Bin/MSBuild.exe"
-windows_project_file="checkBitSize/build/MSVC/checkBitSize.sln"
+windows_project_file="$checkBitSizePath/checkBitSize/build/MSVC/checkBitSize.sln"
 
-win32_command="checkBitSize/build/MSVC/Release/checkBitSize.exe"
-win_x64_command="checkBitSize/build/MSVC/x64/Release/checkBitSize.exe"
+win32_command="$checkBitSizePath/checkBitSize/build/MSVC/Release/checkBitSize.exe"
+win_x64_command="$checkBitSizePath/checkBitSize/build/MSVC/x64/Release/checkBitSize.exe"
 
 err_msg() {
 	echo "Error: $1"
@@ -61,15 +61,15 @@ elif [[ $kernel == MINGW64* && $machine == x86_64 ]]; then
 		"win32")
 			echo "win32"
 			command="$win32_command"
-			bash -c "$windows_compiler $windows_project_file //t:Clean"
-			bash -c "$windows_compiler $windows_project_file //t:Rebuild //p:Configuration=Release //p:Platform=Win32"
+			bash -c "$windows_compiler $windows_project_filcheckBitsSizePatht:Clean"
+			bash -c "$windows_compiler $windows_project_filcheckBitsSizePatht:Rebuild //p:Configuration=Release //p:Platform=Win32"
 			emulator "$command"
 		;;
 		"x64")
 			echo "win x64"
 			command="$win_x64_command"
-			bash -c "$windows_compiler $windows_project_file //t:Clean"
-			bash -c "$windows_compiler $windows_project_file //t:Rebuild //p:Configuration=Release //p:Platform=x64"
+			bash -c "$windows_compiler $windows_project_filcheckBitsSizePatht:Clean"
+			bash -c "$windows_compiler $windows_project_filcheckBitsSizePatht:Rebuild //p:Configuration=Release //p:Platform=x64"
 			emulator "$command"
 		;;
 		*)
