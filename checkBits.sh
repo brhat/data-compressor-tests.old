@@ -1,7 +1,8 @@
 #!/bin/bash
 
 set -euo pipefail
-source emulator.sh
+workdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source "$workdir/emulator.sh"
 checkBitsSizePath=".."
 source_file="$checkBitSizePath/checkBitSize/checkBitSize.c"
 
