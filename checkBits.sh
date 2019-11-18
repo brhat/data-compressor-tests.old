@@ -1,0 +1,83 @@
+#!/bin/bash
+
+set -euo pipefail
+source jenkins/emulator.sh
+
+source_file="checkBitSize/checkBitSize.c"
+
+linux_command="checkBitSize/checkBitSize"
+
+windows_compiler="/c/Program\ Files\ \(x86\)/MSBuild/12.0/Bin/MSBuild.exe"
+windows_project_file="checkBitSize/build/MSVC/checkBitSize.sln"
+
+win32_command="checkBitSize/build/MSVC/Release/checkBitSize.exe"
+win_x64_command="checkBitSize/build/MSVC/x64/Release/checkBitSize.exe"
+
+err_msg() {
+	echo "Error: $1"
+	echo "Linux: checkBitsLinux.sh <i386|x86_64|armhf>"
+	echo "Windows: checkBitsLinux.sh <win32|x64>"
+}
+
+
+# #######################################
+# start of script.
+# #######################################
+if [ ! $# -eq 1 ]; then
+	err_msg "not enough / too much arguments"
+	exit 1
+fi
+
+platform="$1"
+kernel="$(uname -s)"
+machine="$(uname -m)"
+
+if [[ $kernel == Linux* && $machine == x86_64 ]]; then
+    command="$linux_command"
+    case "$platform" in
+        "i386")
+            echo "i386"
+            gcc -m32 -o "$command" "$source_file"
+            emulator "$command"
+
+        ;;
+        "x86_64")
+            echo "x86_64"
+            gcc -o "$command" "$source_file"
+            emulator "$command"
+        ;;
+        "armhf")
+            echo armhf
+            arm-linux-gnueabihf-gcc -o "$command" "$source_file"
+            emulator "$command"
+        ;;
+        *)
+            err_msg "no such target"
+            exit 1
+        ;;
+    esac
+elif [[ $kernel == MINGW64* && $machine == x86_64 ]]; then
+	case "$platform" in
+		"win32")
+			echo "win32"
+			command="$win32_command"
+			bash -c "$windows_compiler $windows_project_file //t:Clean"
+			bash -c "$windows_compiler $windows_project_file //t:Rebuild //p:Configuration=Release //p:Platform=Win32"
+			emulator "$command"
+		;;
+		"x64")
+			echo "win x64"
+			command="$win_x64_command"
+			bash -c "$windows_compiler $windows_project_file //t:Clean"
+			bash -c "$windows_compiler $windows_project_file //t:Rebuild //p:Configuration=Release //p:Platform=x64"
+			emulator "$command"
+		;;
+		*)
+			err_msg "no such target"
+			exit 1
+		;;
+	esac
+else
+	echo "Error. This runs on x86_64 machines, either with linux or windows (mingw)"
+	exit 1
+fi
