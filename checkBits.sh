@@ -3,7 +3,7 @@
 set -euo pipefail
 workdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "$workdir/emulator.sh"
-checkBitsSizePath=".."
+checkBitSizePath=".."
 source_file="$checkBitSizePath/checkBitSize/checkBitSize.c"
 
 linux_command="$checkBitSizePath/checkBitSize/checkBitSize"
@@ -62,15 +62,15 @@ elif [[ $kernel == MINGW64* && $machine == x86_64 ]]; then
 		"win32")
 			echo "win32"
 			command="$win32_command"
-			bash -c "$windows_compiler $windows_project_filcheckBitsSizePatht:Clean"
-			bash -c "$windows_compiler $windows_project_filcheckBitsSizePatht:Rebuild //p:Configuration=Release //p:Platform=Win32"
+			bash -c "$windows_compiler $windows_project_fil //t:Clean"
+			bash -c "$windows_compiler $windows_project_fil //t:Rebuild //p:Configuration=Release //p:Platform=Win32"
 			emulator "$command"
 		;;
 		"x64")
 			echo "win x64"
 			command="$win_x64_command"
-			bash -c "$windows_compiler $windows_project_filcheckBitsSizePatht:Clean"
-			bash -c "$windows_compiler $windows_project_filcheckBitsSizePatht:Rebuild //p:Configuration=Release //p:Platform=x64"
+			bash -c "$windows_compiler $windows_project_fil //t:Clean"
+			bash -c "$windows_compiler $windows_project_fil //t:Rebuild //p:Configuration=Release //p:Platform=x64"
 			emulator "$command"
 		;;
 		*)
