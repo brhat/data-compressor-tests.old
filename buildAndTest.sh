@@ -1,0 +1,143 @@
+#!/bin/bash
+
+# automated build and test script for the datacompressor.
+# the functions containing the actual tests can be found in separate scripts in the same directory
+# the emulator function is used by the testfunctions and also contained in another file.
+
+set -euo pipefail
+source jenkins/emulator.sh
+source jenkins/test_dega.sh
+source jenkins/test_lzmh.sh
+source jenkins/test_copy.sh
+
+is_numeric_regex='^[0-9]+$'
+
+linux_dccli_sep="\#"
+windows_dccli_sep="\#"
+
+linux_dccli_build_dir="DataCompressor/build/gcc/"
+linux_dccli_command="DataCompressor/build/gcc/DCCLI"
+
+testdata_input="DataCompressor/DCCLI/testdata/input.txt"
+testdata_output="DataCompressor/DCCLI/testdata/output.txt"
+
+windows_compiler="/c/Program\ Files\ \(x86\)/MSBuild/12.0/Bin/MSBuild.exe"
+windows_project_file="DataCompressor/build/MSVC/DataCompressor.sln"
+win32_dccli_command="DataCompressor/build/MSVC/Release/DCCLI.exe"
+win_x64_dccli_command="DataCompressor/build/MSVC/x64/Release/DCCLI.exe"
+
+success="success"
+
+err_msg() {
+	echo "Error: $1"
+	echo "Linux: buildAndTest.sh <i386|x86_64|armhf> <IO_SIZE_BITS>"
+	echo "Windows: buildAndTest.sh <win32|x64> <IO_SIZE_BITS>"
+}
+
+tests() {
+	# arg 1: IO_SIZE_BITS for copy blocksize
+	if ! [ $# -eq 1 ] || ! [[ $1 =~ $is_numeric_regex ]]; then
+		echo "tests: exactly one numeric argument expected"
+		exit 1
+	fi
+	
+	local result_dega result_lzmh result_copy
+	echo "=========================================================="
+	echo "testing DEGA"
+	echo "=========================================================="
+	test_dega result_dega
+	echo "=========================================================="
+	echo "testing LZMH"
+	echo "=========================================================="
+	test_lzmh result_lzmh
+	echo "=========================================================="
+	echo "testing copy"
+	echo "=========================================================="
+	test_copy "$1" result_copy 
+	echo "=========================================================="
+	echo "test results"
+	echo "=========================================================="
+	echo "dega: $result_dega"
+	echo "lzmh: $result_lzmh"
+	echo "copy: $result_copy"
+	
+	if ! [[ "$result_dega" == "$success" && "$result_lzmh" == "$success" && "$result_copy" == "$success" ]]; then
+		echo "Error. Some tests did not pass."
+		#exit 1
+	fi
+}
+
+# #######################################
+# start of script.
+# #######################################
+if ! [ $# -eq 2 ]; then
+	err_msg "not enough / too much arguments"
+	exit 1
+fi
+
+if ! [[ $2 =~ $is_numeric_regex ]] ; then
+	err_msg "arg 2 has to be numeric"
+	exit 1
+fi
+
+platform="$1"
+IO_SIZE_BITS="$2"
+
+kernel="$(uname -s)"
+machine="$(uname -m)"
+
+if [[ $kernel == Linux* && $machine == x86_64 ]]; then
+	sep="$linux_dccli_sep"
+	dccli_command="$linux_dccli_command"
+	
+	case "$platform" in
+		"i386")
+			echo "i386"
+			make -C "$linux_dccli_build_dir" clean
+			COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" CFLAGS="-m32" LDFLAGS="-m32" make -C "$linux_dccli_build_dir" release
+			tests "$IO_SIZE_BITS"
+
+		;;
+		"x86_64")
+			echo "x86_64"
+			make -C "$linux_dccli_build_dir" clean
+			COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" make -C "$linux_dccli_build_dir" release
+			tests "$IO_SIZE_BITS"
+		;;
+		"armhf")
+			echo "armhf"
+			make -C "$linux_dccli_build_dir" clean
+			COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" make CC=arm-linux-gnueabihf-gcc -C "$linux_dccli_build_dir" release
+			tests "$IO_SIZE_BITS"
+		;;
+		*)
+			err_msg "no such target"
+			exit 1
+		;;
+	esac
+elif [[ $kernel == MINGW64* && $machine == x86_64 ]]; then
+	sep="$windows_dccli_sep"
+	case "$platform" in
+		"win32")
+			dccli_command="$win32_dccli_command"
+			echo "win32"
+			bash -c "$windows_compiler $windows_project_file //t:Clean"
+			bash -c "$windows_compiler $windows_project_file //t:Rebuild //p:Configuration=Release //p:Platform=Win32"
+			tests "$IO_SIZE_BITS"
+		;;
+		"x64")
+			dccli_command="$win_x64_dccli_command"
+			echo "win x64"
+			bash -c "$windows_compiler $windows_project_file //t:Clean"
+			bash -c "$windows_compiler $windows_project_file //t:Rebuild //p:Configuration=Release //p:Platform=x64"
+			tests "$IO_SIZE_BITS"
+		;;
+		*)
+			err_msg "no such target"
+			exit 1
+		;;
+	esac
+else
+	echo "Error. This runs on x86_64 machines, either with linux or windows (mingw)"
+	exit 1
+fi
