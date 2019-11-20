@@ -1,17 +1,18 @@
 #!/bin/bash
 
 set -euo pipefail
-source jenkins/emulator.sh
+workdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source "$workdir/emulator.sh"
+checkBitSizePath=".."
+source_file="$checkBitSizePath/checkBitSize/checkBitSize.c"
 
-source_file="checkBitSize/checkBitSize.c"
-
-linux_command="checkBitSize/checkBitSize"
+linux_command="$checkBitSizePath/checkBitSize/checkBitSize"
 
 windows_compiler="/c/Program\ Files\ \(x86\)/MSBuild/12.0/Bin/MSBuild.exe"
-windows_project_file="checkBitSize/build/MSVC/checkBitSize.sln"
+windows_project_file="$checkBitSizePath/checkBitSize/build/MSVC/checkBitSize.sln"
 
-win32_command="checkBitSize/build/MSVC/Release/checkBitSize.exe"
-win_x64_command="checkBitSize/build/MSVC/x64/Release/checkBitSize.exe"
+win32_command="$checkBitSizePath/checkBitSize/build/MSVC/Release/checkBitSize.exe"
+win_x64_command="$checkBitSizePath/checkBitSize/build/MSVC/x64/Release/checkBitSize.exe"
 
 err_msg() {
 	echo "Error: $1"
