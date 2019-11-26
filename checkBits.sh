@@ -61,7 +61,7 @@ if [[ $kernel == Linux* ]]; then
 	elif [[ $machine == armv7l ]]; then
 		case "$platform" in
 			"armhf")
-				echo armhf
+				echo "armhf - building on rpi"
 				arm-linux-gnueabihf-gcc -o "$command" "$source_file"
 				emulator "$command"
 			;;
