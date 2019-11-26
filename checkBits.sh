@@ -33,30 +33,45 @@ platform="$1"
 kernel="$(uname -s)"
 machine="$(uname -m)"
 
-if [[ $kernel == Linux* && $machine == x86_64 ]]; then
+if [[ $kernel == Linux* ]]; then
     command="$linux_command"
-    case "$platform" in
-        "i386")
-            echo "i386"
-            gcc -m32 -o "$command" "$source_file"
-            emulator "$command"
+    if [[ $machine == x86_64 ]]; then
+	    case "$platform" in
+		"i386")
+		    echo "i386"
+		    gcc -m32 -o "$command" "$source_file"
+		    emulator "$command"
 
-        ;;
-        "x86_64")
-            echo "x86_64"
-            gcc -o "$command" "$source_file"
-            emulator "$command"
-        ;;
-        "armhf")
-            echo armhf
-            arm-linux-gnueabihf-gcc -o "$command" "$source_file"
-            emulator "$command"
-        ;;
-        *)
-            err_msg "no such target"
-            exit 1
-        ;;
-    esac
+		;;
+		"x86_64")
+		    echo "x86_64"
+		    gcc -o "$command" "$source_file"
+		    emulator "$command"
+		;;
+		"armhf")
+		    echo armhf
+		    arm-linux-gnueabihf-gcc -o "$command" "$source_file"
+		    emulator "$command"
+		;;
+		*)
+		    err_msg "no such target"
+		    exit 1
+		;;
+	    esac
+	elif [[ $machine == armv7l ]]; then
+		case "$platform" in
+			"armhf")
+				echo armhf
+				arm-linux-gnueabihf-gcc -o "$command" "$source_file"
+				emulator "$command"
+			;;
+			*)
+				err_msg "on the raspberry pi, we won't build and test other platforms"
+				exit 1
+			;;
+		esac
+	fi
+
 elif [[ $kernel == MINGW64* && $machine == x86_64 ]]; then
 	case "$platform" in
 		"win32")

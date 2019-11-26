@@ -86,35 +86,50 @@ IO_SIZE_BITS="$2"
 kernel="$(uname -s)"
 machine="$(uname -m)"
 
-if [[ $kernel == Linux* && $machine == x86_64 ]]; then
+if [[ $kernel == Linux* ]]; then
 	sep="$linux_dccli_sep"
-	dccli_command="$linux_dccli_command"
-	
-	case "$platform" in
-		"i386")
-			echo "i386"
-			make -C "$linux_dccli_build_dir" clean
-			COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" CFLAGS="-m32" LDFLAGS="-m32" make -C "$linux_dccli_build_dir" release
-			tests "$IO_SIZE_BITS"
+	if [[ $machine == x86_64 ]]; then
+		dccli_command="$linux_dccli_command"
+		
+		case "$platform" in
+			"i386")
+				echo "i386"
+				make -C "$linux_dccli_build_dir" clean
+				COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" CFLAGS="-m32" LDFLAGS="-m32" make -C "$linux_dccli_build_dir" release
+				tests "$IO_SIZE_BITS"
 
-		;;
-		"x86_64")
-			echo "x86_64"
-			make -C "$linux_dccli_build_dir" clean
-			COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" make -C "$linux_dccli_build_dir" release
-			tests "$IO_SIZE_BITS"
-		;;
-		"armhf")
-			echo "armhf"
-			make -C "$linux_dccli_build_dir" clean
-			COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" make CC=arm-linux-gnueabihf-gcc -C "$linux_dccli_build_dir" release
-			tests "$IO_SIZE_BITS"
-		;;
-		*)
-			err_msg "no such target"
-			exit 1
-		;;
-	esac
+			;;
+			"x86_64")
+				echo "x86_64"
+				make -C "$linux_dccli_build_dir" clean
+				COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" make -C "$linux_dccli_build_dir" release
+				tests "$IO_SIZE_BITS"
+			;;
+			"armhf")
+				echo "armhf"
+				make -C "$linux_dccli_build_dir" clean
+				COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" make CC=arm-linux-gnueabihf-gcc -C "$linux_dccli_build_dir" release
+				tests "$IO_SIZE_BITS"
+			;;
+			*)
+				err_msg "no such target"
+				exit 1
+			;;
+		esac
+	elif [[ $machine == armv7l ]]; then
+		case "$platform" in
+			"armhf")
+				echo "armhf"
+				make -C "$linux_dccli_build_dir" clean
+				COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" make CC=arm-linux-gnueabihf-gcc -C "$linux_dccli_build_dir" release
+				tests "$IO_SIZE_BITS"
+			;;
+			*)
+				err_msg "on the raspberry pi, we won't build and test other platforms"
+				exit 1
+			;;
+		esac
+	fi
 elif [[ $kernel == MINGW64* && $machine == x86_64 ]]; then
 	sep="$windows_dccli_sep"
 	case "$platform" in
