@@ -15,10 +15,13 @@ windows_project_file="$checkBitSizePath/checkBitSize/build/MSVC/checkBitSize.sln
 win32_command="$checkBitSizePath/checkBitSize/build/MSVC/Release/checkBitSize.exe"
 win_x64_command="$checkBitSizePath/checkBitSize/build/MSVC/x64/Release/checkBitSize.exe"
 
+script_name="$(basename "$0")"
+
 err_msg() {
 	echo "Error: $1"
-	echo "Linux: checkBitsLinux.sh <i386|x86_64|armhf>"
-	echo "Windows: checkBitsLinux.sh <win32|x64>"
+	echo "Linux: $script_name <i386|x86_64|armhf>"
+	echo "Raspberry: $script_name <arm>"
+	echo "Windows: $script_name <win32|x64>"
 }
 
 
