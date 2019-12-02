@@ -2,6 +2,7 @@
 
 set -euo pipefail
 workdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+#shellcheck source=./emulator.sh
 source "$workdir/emulator.sh"
 checkBitSizePath=".."
 source_file="$checkBitSizePath/checkBitSize/checkBitSize.c"
@@ -58,11 +59,11 @@ if [[ $kernel == Linux* ]]; then
 		    exit 1
 		;;
 	    esac
-	elif [[ $machine == armv7l ]]; then
+	elif [[ $machine == armv* ]]; then
 		case "$platform" in
-			"armhf")
-				echo "armhf - building on rpi"
-				arm-linux-gnueabihf-gcc -o "$command" "$source_file"
+			"arm")
+				echo "arm - building on rpi"
+				gcc -o "$command" "$source_file"
 				emulator "$command"
 			;;
 			*)
