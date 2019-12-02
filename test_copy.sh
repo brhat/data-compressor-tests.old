@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 test_copy() {
 	# function to run the copy algorithm on testdata.
 	# dccli_command, testdata_input, testdata_output, sep and success are global vars that have to be set in the script sourcing this file.

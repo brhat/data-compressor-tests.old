@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 emulator(){
 	# checks the executable's  format and the platform we're on. 
 	# on linux, if i386 or arm, it chooses quemu accordingly.
