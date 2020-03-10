@@ -49,7 +49,7 @@ emulator(){
                 elif [[ $m == arm* ]] || [[ $m == aarch64 ]]; then
                         echo "native raspberrypi arch=$m"
                         case "$p" in
-                                "ARM*")
+                                "ARM" | "ARM aarch64")
                                         echo "command: $*"
                                         echo "no emulator - native."
                                         bash -c "$*"
