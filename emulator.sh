@@ -10,12 +10,12 @@ emulator(){
         # first arg: executable
         # 2nd... nth arg: any argument for executable.
         if [ ! $# -ge 1 ]; then
-        echo "Error: emulator requires at least one arg."
-        echo "Usage: emulator <executable> [args]"
-        exit 1
-    fi
-    echo "choosing emulator for $1"
-    echo "file type: $(file -b "$1")"
+            echo "Error: emulator requires at least one arg."
+            echo "Usage: emulator <executable> [args]"
+            exit 1
+        fi
+        echo "choosing emulator for $1"
+        echo "file type: $(file -b "$1")"
         local p
         local k
         local m
@@ -49,7 +49,7 @@ emulator(){
                 elif [[ $m == arm* ]] || [[ $m == aarch64 ]]; then
                         echo "native raspberrypi arch=$m"
                         case "$p" in
-                                "ARM")
+                                "ARM*")
                                         echo "command: $*"
                                         echo "no emulator - native."
                                         bash -c "$*"
