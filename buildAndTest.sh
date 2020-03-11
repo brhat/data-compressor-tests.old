@@ -96,8 +96,8 @@ machine="$(uname -m)"
 
 if [[ $kernel == Linux* ]]; then
         sep="$linux_dccli_sep"
+        dccli_command="$linux_dccli_command"
         if [[ $machine == x86_64 ]]; then
-                dccli_command="$linux_dccli_command"
 
                 case "$platform" in
                         "i386")
