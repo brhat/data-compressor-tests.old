@@ -2,7 +2,6 @@
 
 set -euo pipefail
 workdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-#shellcheck source=./emulator.sh
 source "$workdir/emulator.sh"
 checkBitSizePath=".."
 source_file="$checkBitSizePath/checkBitSize/checkBitSize.c"

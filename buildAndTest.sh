@@ -5,33 +5,40 @@
 # the emulator function is used by the testfunctions and also contained in another file.
 
 set -euo pipefail
-source jenkins/emulator.sh
-source jenkins/test_dega.sh
-source jenkins/test_lzmh.sh
-source jenkins/test_copy.sh
+
+workdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source "$workdir/emulator.sh"
+source "$workdir/test_dega.sh"
+source "$workdir/test_lzmh.sh"
+source "$workdir/test_copy.sh"
+
+dataCompressorPath="../data-compressor"
 
 is_numeric_regex='^[0-9]+$'
 
 linux_dccli_sep="\#"
 windows_dccli_sep="\#"
 
-linux_dccli_build_dir="DataCompressor/build/gcc/"
-linux_dccli_command="DataCompressor/build/gcc/DCCLI"
+linux_dccli_build_dir="$dataCompressorPath/DataCompressor/build/gcc/"
+linux_dccli_command="$dataCompressorPath/DataCompressor/build/gcc/DCCLI"
 
-testdata_input="DataCompressor/DCCLI/testdata/input.txt"
-testdata_output="DataCompressor/DCCLI/testdata/output.txt"
+testdata_input="$dataCompressorPath/DataCompressor/DCCLI/testdata/input.txt"
+testdata_output="$dataCompressorPath/DataCompressor/DCCLI/testdata/output.txt"
 
 windows_compiler="/c/Program\ Files\ \(x86\)/MSBuild/12.0/Bin/MSBuild.exe"
 windows_project_file="DataCompressor/build/MSVC/DataCompressor.sln"
 win32_dccli_command="DataCompressor/build/MSVC/Release/DCCLI.exe"
 win_x64_dccli_command="DataCompressor/build/MSVC/x64/Release/DCCLI.exe"
 
+script_name="$(basename "$0")"
+
 success="success"
 
 err_msg() {
         echo "Error: $1"
-        echo "Linux: buildAndTest.sh <i386|x86_64|armhf> <IO_SIZE_BITS>"
-        echo "Windows: buildAndTest.sh <win32|x64> <IO_SIZE_BITS>"
+        echo "Linux: $script_name <i386|x86_64|armhf> <IO_SIZE_BITS>"
+        echo "Raspberry: $script_name <arm> <IO_SIZE_BITS>"
+        echo "Windows: $script_name <win32|x64> <IO_SIZE_BITS>"
 }
 
 tests() {
@@ -116,10 +123,10 @@ if [[ $kernel == Linux* ]]; then
                                 exit 1
                         ;;
                 esac
-        elif [[ $machine == armv7l ]]; then
+        elif [[ $machine == armv* ]] || [[ $machine == aarch64 ]]; then
                 case "$platform" in
-                        "armhf")
-                                echo "armhf"
+                        "arm")
+                                echo "arch: $machine - building on rpi"
                                 make -C "$linux_dccli_build_dir" clean
                                 COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" make CC=arm-linux-gnueabihf-gcc -C "$linux_dccli_build_dir" release
                                 tests "$IO_SIZE_BITS"
