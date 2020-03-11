@@ -68,7 +68,8 @@ tests() {
         echo "lzmh: $result_lzmh"
 #        echo "copy: $result_copy"
 
-        if ! [[ "$result_dega" == "$success" && "$result_lzmh" == "$success" && "$result_copy" == "$success" ]]; then
+#        if ! [[ "$result_dega" == "$success" && "$result_lzmh" == "$success" && "$result_copy" == "$success" ]]; then
+        if ! [[ "$result_dega" == "$success" && "$result_lzmh" == "$success" ]]; then
                 echo "Error. Some tests did not pass."
                 exit 1
         fi
