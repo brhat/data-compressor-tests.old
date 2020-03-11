@@ -129,7 +129,7 @@ if [[ $kernel == Linux* ]]; then
                         "arm")
                                 echo "arch: $machine - building on rpi"
                                 make -C "$linux_dccli_build_dir" clean
-                                COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" make CC=arm-linux-gnueabihf-gcc -C "$linux_dccli_build_dir" release
+                                COMMON_CFLAGS="IO_SIZE_BITS=$IO_SIZE_BITS" make CC=gcc -C "$linux_dccli_build_dir" release
                                 tests "$IO_SIZE_BITS"
                         ;;
                         *)
