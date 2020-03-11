@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # automated build and test script for the datacompressor.
 # the functions containing the actual tests can be found in separate scripts in the same directory
