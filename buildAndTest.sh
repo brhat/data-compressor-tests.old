@@ -58,19 +58,19 @@ tests() {
         echo "=========================================================="
         test_lzmh result_lzmh
         echo "=========================================================="
-        echo "testing copy"
-        echo "=========================================================="
-        test_copy "$1" result_copy
-        echo "=========================================================="
-        echo "test results"
-        echo "=========================================================="
+#        echo "testing copy"
+#        echo "=========================================================="
+#        test_copy "$1" result_copy
+#        echo "=========================================================="
+#        echo "test results"
+#        echo "=========================================================="
         echo "dega: $result_dega"
         echo "lzmh: $result_lzmh"
-        echo "copy: $result_copy"
+#        echo "copy: $result_copy"
 
         if ! [[ "$result_dega" == "$success" && "$result_lzmh" == "$success" && "$result_copy" == "$success" ]]; then
                 echo "Error. Some tests did not pass."
-                #exit 1
+                exit 1
         fi
 }
 
