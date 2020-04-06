@@ -33,9 +33,12 @@ test_dega() {
         if [[ "$dccli_return" -eq 0 ]]; then
                 set +e # start ignoring errors
                 # depending on windows / linux line endings might differ. copy and lzmh should preserve line endings.
-                # because of that we ignore trailing CRs
-                #diff -q --strip-trailing-cr "${testdata_input:?}" "${testdata_output:?}"
-                diff -q "${testdata_input:?}" "${testdata_output:?}"
+                # because of that we ignore trailing CRs on windows
+                if [[ $(uname -s) == Linux* ]]; then
+                        diff -q "${testdata_input:?}" "${testdata_output:?}"
+                else
+                        diff -q --strip-trailing-cr "${testdata_input:?}" "${testdata_output:?}"
+                fi
                 diff_return="$?"
                 set -e # stop ignoring errors
                 if ! [[ "$diff_return" -eq 0 ]]; then
