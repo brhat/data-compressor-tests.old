@@ -26,9 +26,9 @@ testdata_input="$dataCompressorPath/DataCompressor/DCCLI/testdata/input.txt"
 testdata_output="$dataCompressorPath/DataCompressor/DCCLI/testdata/output.txt"
 
 windows_compiler="/c/Program\ Files\ \(x86\)/MSBuild/12.0/Bin/MSBuild.exe"
-windows_project_file="DataCompressor/build/MSVC/DataCompressor.sln"
-win32_dccli_command="DataCompressor/build/MSVC/Release/DCCLI.exe"
-win_x64_dccli_command="DataCompressor/build/MSVC/x64/Release/DCCLI.exe"
+windows_project_file="$dataCompressorPath/DataCompressor/build/MSVC/DataCompressor.sln"
+win32_dccli_command="$dataCompressorPath/DataCompressor/build/MSVC/Release/DCCLI.exe"
+win_x64_dccli_command="$dataCompressorPath/DataCompressor/build/MSVC/x64/Release/DCCLI.exe"
 
 script_name="$(basename "$0")"
 
