@@ -1,7 +1,7 @@
 # data-compressor-tests
 This repository contains automated tests for the data-compressor: https://github.com/CenterForSecureEnergyInformatics/data-compressor
 The tests can be used manually, but are intended for a CI system (buildbot).
-The proper envirionment for building and testing is chosen automatically.
+The proper environment for building and testing is chosen automatically.
 
 ## prerequisites
 On Windows, you have to have installed:
@@ -20,7 +20,7 @@ buildAndTest.sh <i386|x86_64|armhf|arm|win32|x64> <IO_SIZE_BITS>
 First, the data-compressor is built for the platform specified via the first argument.
 The second argument specifies IO_SIZE_BITS.
 
-After compilation, testdata (contained in the data-compressor repository) is compressend and decompressed with the following methods:
+After compilation, testdata (contained in the data-compressor repository) is compressed and decompressed with the following methods:
 - dega
 - lzmh
 - copy
